@@ -1,32 +1,34 @@
 src=booth
 testname=booth_tb
+top      = tb_booth_multiplier
 verbosity=UVM_MEDIUM
 .DEFAULT_GOAL := help
 
 list: # target
+	@echo "# rtl" > list.f
 	@echo "../rtl/${src}_rtl.sv" >> list.f
+	@echo "# verification" >> list.f
 	@echo "./${testname}.sv" >> list.f
 	
 ana: list
 	xvlog -sv -f list.f -L uvm
 elab: ana
-	xelab -debug typical --relax ${src}_tb
+	xelab -debug typical --relax ${top}
 sim: elab
-	xsim work.${src}_tb -runall
+	xsim work.${top} -runall
 
 waves:
-	xsim work.${src}_tb.wdb -autoloadwcfg -gui &
+	xsim work.${top}.wdb -autoloadwcfg -gui &
 
 sim_gui: elab
-	xsim work.${src}_tb -runall -gui
+	xsim work.${top} -runall -gui
 cov: 
 	xcrg -report_format html -dir xsim.covdb
 sim_uvm: elab
-	xsim work.${src}_tb "UVM_TESTNAME=${testname}"
-help:
+	xsim work.${top} "UVM_TESTNAME=${testname}"
 	
 sim_uvm_gui: elab
-	xsim work.${src}_tb -gui "UVM_TESTNAME=${testname}"
+	xsim work.${top} -gui "UVM_TESTNAME=${testname}"
 help:
 	@echo ""
 	@echo "==== Basic Vivado Compile/Simulator makefile ======"
@@ -39,4 +41,4 @@ help:
 	@echo ""
 clean:
 	rm -rf xvlog* xelab* xsim* webtalk* tr_db* ana elab sim .Xil vivado* work*
-	rmdir /s /q xsim.dir
+	rm -rf xsim.dir

@@ -1,1 +1,5 @@
-ERROR: [XSIM 43-4316] Can not find file: ../booth_tb.sv
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/israel/IsraelDD2026/rtl/booth_rtl.sv" into library work
+INFO: [VRFC 10-311] analyzing module booth_stage
+INFO: [VRFC 10-311] analyzing module booth_multiplier
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/israel/IsraelDD2026/verif/booth_tb.sv" into library work
+INFO: [VRFC 10-311] analyzing module tb_booth_multiplier

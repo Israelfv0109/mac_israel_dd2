@@ -1,0 +1,52 @@
+#-----------------------------------------------------------
+# xsim v2025.2 (64-bit)
+# SW Build 6299465 on Fri Nov 14 12:34:56 MST 2025
+# IP Build 6300035 on Fri Nov 14 10:48:45 MST 2025
+# SharedData Build 6298862 on Thu Nov 13 04:50:51 MST 2025
+# Start of session at: Thu Jan 22 14:52:35 2026
+# Process ID         : 2844
+# Current directory  : /home/israel/IsraelDD2026/verif
+# Command line       : xsim -mode tcl -source {xsim.dir/work.tb_booth_multiplier/xsim_script.tcl}
+# Log file           : /home/israel/IsraelDD2026/verif/xsim.log
+# Journal file       : /home/israel/IsraelDD2026/verif/xsim.jou
+# Running On         : MSI
+# Platform           : Ubuntu
+# Operating System   : Ubuntu 24.04.3 LTS
+# Processor Detail   : 13th Gen Intel(R) Core(TM) i5-13500H
+# CPU Frequency      : 3187.198 MHz
+# CPU Physical cores : 8
+# CPU Logical cores  : 16
+# Host memory        : 8170 MB
+# Swap memory        : 2147 MB
+# Total Virtual      : 10318 MB
+# Available Virtual  : 9821 MB
+#-----------------------------------------------------------
+source xsim.dir/work.tb_booth_multiplier/xsim_script.tcl
+# xsim {work.tb_booth_multiplier} -autoloadwcfg -runall
+Time resolution is 1 ps
+run -all
+*********** Iniciando Simulacion de casos ***********
+*********** Caso inicial 0*0 ************************
+MATCH: m :    0 * q :    0, rtl:       0, tb:    0
+*********** Prueba 1: Positivo * Positivo ***********
+MATCH: m :    3 * q :    2, rtl:       6, tb:    6
+*********** Prueba 2: Positivo * Negativo ***********
+MATCH: m :    3 * q :   -2, rtl:      -6, tb:   -6
+*********** Prueba 3: Negativo * Positivo ***********
+MATCH: m :   -3 * q :    2, rtl:      -6, tb:   -6
+*********** Prueba 4: Negativo * Negativo ***********
+MATCH: m :   -3 * q :   -2, rtl:       6, tb:    6
+*********** Prueba 5: Limite positivo * -1 **********
+MATCH: m :    7 * q :   -1, rtl:      -7, tb:   -7
+*********** Prueba 6: Limite negativo ***************
+MATCH: m :   -8 * q :    7, rtl:     -56, tb:  -56
+*********** Prueba 7: Multiplicacion por cero *******
+MATCH: m :    5 * q :    0, rtl:       0, tb:    0
+*********** Prueba 8: Cero por un numero ************
+MATCH: m :    0 * q :   -5, rtl:       0, tb:    0
+*****************************************************
+************** Simulacion Finalizada ****************
+$finish called at time : 90 ns : File "/home/israel/IsraelDD2026/verif/booth_tb.sv" Line 120
+exit
+INFO: xsimkernel Simulation Memory Usage: 276852 KB (Peak: 334384 KB), Simulation CPU Usage: 650 ms
+INFO: [Common 17-206] Exiting xsim at Thu Jan 22 14:52:38 2026...
