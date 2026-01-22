@@ -1,15 +1,13 @@
-src=async_FIFO
-testname=test
+src=booth
+testname=booth_tb
 verbosity=UVM_MEDIUM
 .DEFAULT_GOAL := help
 
 list: # target
-	echo # rtl > list.f
-	IF EXIST ../rtl/${src}_rtl.sv echo ..\rtl\${src}_rtl.sv >> list.f
-	echo # verification >> list.f
-	echo ../verif/${src}.sv >> list.f
+	@echo "../rtl/${src}_rtl.sv" >> list.f
+	@echo "./${testname}.sv" >> list.f
 	
-ana:
+ana: list
 	xvlog -sv -f list.f -L uvm
 elab: ana
 	xelab -debug typical --relax ${src}_tb
