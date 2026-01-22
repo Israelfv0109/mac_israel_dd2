@@ -1,5 +1,5 @@
 # ============================ rtl
-	../../rtl/Booth.sv
+	../../rtl/RTL1.sv
 
 # ============================ verification
-	../tb_booth.sv
+	../TB.sv
