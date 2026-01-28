@@ -1,39 +1,29 @@
 xrun(64): 25.03-s008: (c) Copyright 1995-2025 Cadence Design Systems, Inc.
-TOOL:	xrun(64)	25.03-s008: Started on Jan 22, 2026 at 21:41:18 UTC
+TOOL:	xrun(64)	25.03-s008: Started on Jan 28, 2026 at 00:03:00 UTC
 xrun
 	-f list.f
-		../rtl/booth_rtl.sv
-		./booth_tb.sv
+		../rtl/lvl3_rtl.sv
+		../rtl/lvl2_rtl.sv
+		../rtl/lvl1_rtl.sv
+		./mac_tb.sv
 	-l ./logs/comp.log
-	+define+tb_booth_multiplier+
+	+define+mac_tb+
 	-access +rwc
 	-timescale 1ns/1ps
 	-sv
-Loading snapshot worklib.tb_booth_multiplier:sv .................... Done
+Loading snapshot worklib.tb_mac_top:sv .................... Done
 xcelium> source /mnt/edatools/cadence/XCELIUM2503/tools/xcelium/files/xmsimrc
 xcelium> run
-*********** Iniciando Simulacion de casos ***********
-*********** Caso inicial 0*0 ************************
-MATCH: m :    0 * q :    0, rtl:       0, tb:    0
-*********** Prueba 1: Positivo * Positivo ***********
-MATCH: m :    3 * q :    2, rtl:       6, tb:    6
-*********** Prueba 2: Positivo * Negativo ***********
-MATCH: m :    3 * q :   -2, rtl:      -6, tb:   -6
-*********** Prueba 3: Negativo * Positivo ***********
-MATCH: m :   -3 * q :    2, rtl:      -6, tb:   -6
-*********** Prueba 4: Negativo * Negativo ***********
-MATCH: m :   -3 * q :   -2, rtl:       6, tb:    6
-*********** Prueba 5: Limite positivo * -1 **********
-MATCH: m :    7 * q :   -1, rtl:      -7, tb:   -7
-*********** Prueba 6: Limite negativo ***************
-MATCH: m :   -8 * q :    7, rtl:     -56, tb:  -56
-*********** Prueba 7: Multiplicacion por cero *******
-MATCH: m :    5 * q :    0, rtl:       0, tb:    0
-*********** Prueba 8: Cero por un numero ************
-MATCH: m :    0 * q :   -5, rtl:       0, tb:    0
-*****************************************************
-************** Simulacion Finalizada ****************
-Simulation complete via $finish(1) at time 90 NS + 0
-./booth_tb.sv:120         $finish;
+--------------------------------------------------
+INICIANDO PRUEBA DE UNIDAD MAC
+--------------------------------------------------
+[MAC] Multiplicación:     10 *      5 terminada. Acumulado parcial:              0
+[MAC] Multiplicación:      2 *     -3 terminada. Acumulado parcial:              0
+[MAC] Multiplicación:    100 *     10 terminada. Acumulado parcial:              0
+--------------------------------------------------
+ERROR: Resultado esperado 1044, obtenido              0
+--------------------------------------------------
+Simulation complete via $finish(1) at time 685 NS + 0
+./mac_tb.sv:89         #50 $finish;
 xcelium> exit
-TOOL:	xrun(64)	25.03-s008: Exiting on Jan 22, 2026 at 21:41:39 UTC  (total: 00:00:21)
+TOOL:	xrun(64)	25.03-s008: Exiting on Jan 28, 2026 at 00:03:20 UTC  (total: 00:00:20)

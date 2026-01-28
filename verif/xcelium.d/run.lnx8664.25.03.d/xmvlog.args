@@ -5,10 +5,12 @@
 -XLMODE
 ./xcelium.d/run.lnx8664.25.03.d
 -RUNMODE
-../rtl/booth_rtl.sv
-./booth_tb.sv
+../rtl/lvl3_rtl.sv
+../rtl/lvl2_rtl.sv
+../rtl/lvl1_rtl.sv
+./mac_tb.sv
 -DEFINE
-tb_booth_multiplier
+mac_tb
 -sv
 -CDSLIB
 ./xcelium.d/run.lnx8664.25.03.d/cdsrun.lib

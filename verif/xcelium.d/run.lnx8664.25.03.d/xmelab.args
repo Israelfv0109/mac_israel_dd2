@@ -2,7 +2,7 @@
 // File created by:  xrun
 // Do not modify this file
 //
-+define+tb_booth_multiplier+
++define+mac_tb+
 -ACCESS
 +rwc
 -timescale

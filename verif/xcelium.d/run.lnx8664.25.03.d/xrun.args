@@ -6,7 +6,7 @@
 list.f
 -l
 ./logs/comp.log
-+define+tb_booth_multiplier+
++define+mac_tb+
 -access
 +rwc
 -timescale

@@ -3,5 +3,5 @@
 // Do not modify this file
 //
 -DEFINE
-tb_booth_multiplier
+mac_tb
 -sv

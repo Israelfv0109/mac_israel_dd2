@@ -2,5 +2,7 @@
 // File created by:  xrun
 // Do not modify this file
 //
-/home/israel/IsraelDD2026/rtl/booth_rtl.sv
-/home/israel/IsraelDD2026/verif/booth_tb.sv
+/home/israel/IsraelDD2026/rtl/lvl3_rtl.sv
+/home/israel/IsraelDD2026/rtl/lvl2_rtl.sv
+/home/israel/IsraelDD2026/rtl/lvl1_rtl.sv
+/home/israel/IsraelDD2026/verif/mac_tb.sv

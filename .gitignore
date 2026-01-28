@@ -1,0 +1,25 @@
+# --- Basura de Vivado (Local Ubuntu) ---
+xsim.dir/
+.Xil/
+*.log
+*.jou
+*.pb
+*.wdb
+*.vdi
+*.str
+
+# --- Basura de Cadence/Xcelium (Servidor) ---
+xcelium.d/
+xrun.log
+xrun.history
+SimVision/
+*.shm/
+dsn/
+*.trn
+*.dsn
+
+# --- Archivos de Ondas y Logs generales ---
+*.vcd
+*.bak
+*.old
+list.f.bak

@@ -5,3 +5,7 @@
 s1::(22Jan2026:21:34:33):( xrun -f list.f -l ./logs/comp.log +define+tb_booth_multiplier+ -access +rwc -timescale 1ns/1ps -sv )&&(./xcelium.d/env.d/env.history.22Jan2026_21_34_33)
 s2::(22Jan2026:21:35:21):( xrun -f list.f -l ./logs/comp.log +define+tb_booth_multiplier+ -access +rwc -timescale 1ns/1ps -sv )&&(./xcelium.d/env.d/env.history.22Jan2026_21_35_21)
 s3::(22Jan2026:21:41:18):( xrun -f list.f -l ./logs/comp.log +define+tb_booth_multiplier+ -access +rwc -timescale 1ns/1ps -sv )&&(./xcelium.d/env.d/env.history.22Jan2026_21_41_18)
+s4::(27Jan2026:23:51:19):( xrun -f list.f -l ./logs/comp.log +define+mac_tb+ -access +rwc -timescale 1ns/1ps -sv )&&(./xcelium.d/env.d/env.history.27Jan2026_23_51_19)
+s5::(27Jan2026:23:52:56):( xrun -f list.f -l ./logs/comp.log +define+mac_tb+ -access +rwc -timescale 1ns/1ps -sv )&&(./xcelium.d/env.d/env.history.27Jan2026_23_52_56)
+s6::(28Jan2026:00:00:31):( xrun -f list.f -l ./logs/comp.log +define+mac_tb+ -access +rwc -timescale 1ns/1ps -sv )&&(./xcelium.d/env.d/env.history.28Jan2026_00_00_31)
+s7::(28Jan2026:00:03:00):( xrun -f list.f -l ./logs/comp.log +define+mac_tb+ -access +rwc -timescale 1ns/1ps -sv )&&(./xcelium.d/env.d/env.history.28Jan2026_00_03_00)
