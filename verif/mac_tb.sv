@@ -38,10 +38,9 @@ module tb_mac_top();
             @(posedge clk);
             start = 0;
             
-            // Esperamos a que el multiplicador termine (16+ ciclos)
             wait(ready_mac == 1);
-            $display("[MAC] Multiplicación: %d * %d terminada. Acumulado parcial: %d", a, b, $signed(Accumulator));
-            @(posedge clk);
+            @(posedge clk); // <--- AGREGA ESTO: Espera un ciclo para que el acumulador guarde el resultado
+            $display("[MAC] Multiplicacion: %d * %d terminada. Acumulado parcial: %d", a, b, $signed(Accumulator));
         end
     endtask
 
