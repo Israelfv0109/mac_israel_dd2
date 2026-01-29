@@ -77,7 +77,7 @@ module tb_mac_top();
         #20;
         if (Accumulator == 40'd1044) begin
             $display("--------------------------------------------------");
-            $display("¡PRUEBA EXITOSA! Resultado Final: %d", $signed(Accumulator));
+            $display("PRUEBA EXITOSA Resultado Final: %d", $signed(Accumulator));
             $display("--------------------------------------------------");
         end else begin
             $display("--------------------------------------------------");
@@ -86,12 +86,6 @@ module tb_mac_top();
         end
 
         #50 $finish;
-    end
-
-    // --- Generación de archivo para ver ondas (opcional para SimVision) ---
-    initial begin
-        $dumpfile("mac_waves.vcd");
-        $dumpvars(0, tb_mac_top);
     end
 
 endmodule

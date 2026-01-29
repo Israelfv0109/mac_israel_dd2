@@ -1,10 +1,10 @@
 /*******************************************************************************
- * NIVEL 3: BLOQUES ATÓMICOS DE LA UNIDAD MAC
+ * NIVEL 3: BLOQUES ATOMICOS DE LA UNIDAD MAC
  * Incluye: FSM de Booth, Datapath de Booth y Sumador de 40 bits
  ******************************************************************************/
 `timescale 1ns/1ps
 
-// 1. FSM de Booth (CORREGIDA)
+// 1. FSM de Booth
 module booth_fsm #(parameter DATA_WIDTH = 16) (
     input  logic clk, rst_n, start,
     output logic load, shift, op_sel, ready
@@ -29,7 +29,7 @@ module booth_fsm #(parameter DATA_WIDTH = 16) (
         case (state)
             IDLE: next_state = start ? LOAD : IDLE;
             LOAD: begin
-                load = 1'b1;       // <--- ¡ESTO FALTABA! Sin esto, todo es cero.
+                load = 1'b1;
                 next_state = CALC;
             end
             CALC: begin
@@ -46,7 +46,7 @@ module booth_fsm #(parameter DATA_WIDTH = 16) (
     end
 endmodule
 
-// 2. Datapath de Booth (OPTIMIZADO)
+// 2. Datapath de Booth
 module booth_datapath #(parameter DATA_WIDTH = 16) (
     input  logic clk, rst_n,
     input  logic [DATA_WIDTH-1:0] m_in, q_in,

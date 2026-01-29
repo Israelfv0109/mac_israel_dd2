@@ -24,7 +24,6 @@ module booth_multiplier #(parameter DATA_WIDTH = 16) (
     );
 endmodule
 
-// Ahora es paramétrico para evitar errores de width
 module accumulator_unit #(parameter DATA_WIDTH = 16) (
     input  logic clk, rst_n, clr_acc, acc_en,
     input  logic [2*DATA_WIDTH-1:0] product_in,
