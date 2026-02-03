@@ -35,7 +35,7 @@ module booth_fsm #(parameter DATA_WIDTH = 16) (
             CALC: begin
                 op_sel = 1'b1;
                 shift  = 1'b1;
-                next_state = (bit_cnt == DATA_WIDTH-1) ? DONE : CALC;
+                next_state = (bit_cnt == (DATA_WIDTH/2)-1) ? DONE : CALC;
             end
             DONE: begin
                 ready = 1'b1;
@@ -67,11 +67,13 @@ module booth_datapath #(parameter DATA_WIDTH = 16) (
             Q <= q_in;
             q_prev <= 1'b0;
         end else if (op_sel && shift) begin
-            // Cálculo y Desplazamiento en un solo paso seguro
-            case ({Q[0], q_prev})
-                2'b01:   {A, Q, q_prev} <= $signed({A + M, Q, q_prev}) >>> 1;
-                2'b10:   {A, Q, q_prev} <= $signed({A - M, Q, q_prev}) >>> 1;
-                default: {A, Q, q_prev} <= $signed({A, Q, q_prev}) >>> 1;
+            // Lógica Radix-4: Miramos 3 bits y desplazamos 2
+            case ({Q[1], Q[0], q_prev})
+                3'b001, 3'b010: {A, Q, q_prev} <= $signed({A + M, Q, q_prev}) >>> 2;
+                3'b101, 3'b110: {A, Q, q_prev} <= $signed({A - M, Q, q_prev}) >>> 2;
+                3'b011: {A, Q, q_prev} <= $signed({A + (M <<< 1), Q, q_prev}) >>> 2;
+                3'b100: {A, Q, q_prev} <= $signed({A - (M <<< 1), Q, q_prev}) >>> 2;
+                default: {A, Q, q_prev} <= $signed({A, Q, q_prev}) >>> 2;
             endcase
         end
     end
