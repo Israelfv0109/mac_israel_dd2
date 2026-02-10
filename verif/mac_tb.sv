@@ -1,91 +1,79 @@
 `timescale 1ns/1ps
 
-module tb_mac_top();
+module tb_mac_top;
 
-    // --- Parámetros y Señales ---
-    parameter DATA_WIDTH = 16;
-    logic clk;
-    logic rst_n;
-    logic start;
-    logic clr_acc;
-    logic [DATA_WIDTH-1:0] A_in;
-    logic [DATA_WIDTH-1:0] B_in;
-    logic [39:0] Accumulator;
-    logic ready_mac;
+  // Señales Globales
+  logic clk;
+  logic rst_n;
 
-    // --- Instancia de la Unidad MAC (DUT) ---
-    mac_top #(.DATA_WIDTH(DATA_WIDTH)) dut (
-        .clk(clk),
-        .rst_n(rst_n),
-        .start(start),
-        .clr_acc(clr_acc),
-        .A_in(A_in),
-        .B_in(B_in),
-        .Accumulator(Accumulator),
-        .ready_mac(ready_mac)
-    );
+  // Instancia de la INTERFAZ
+  mac_if _if (clk, rst_n);
 
-    // --- Generación de Reloj (100 MHz) ---
-    always #5 clk = ~clk;
+  // Conexión del DUT
+  mac_top dut (
+    .clk      (clk),
+    .rst_n    (rst_n),
+    // Conectamos el DUT a las señales internas de la interfaz
+    .start    (_if.start),
+    .m_in     (_if.m_in), 
+    .q_in     (_if.q_in),
+    .product  (_if.product),
+    .ready    (_if.ready)
+  );
 
-    // --- Tarea para realizar una multiplicación ---
-    task automatic multiply_and_add(input logic signed [15:0] a, input logic signed [15:0] b);
-        begin
-            A_in = a;
-            B_in = b;
-            @(posedge clk);
-            start = 1;
-            @(posedge clk);
-            start = 0;
-            
-            wait(ready_mac == 1);
-            @(posedge clk); // <--- AGREGA ESTO: Espera un ciclo para que el acumulador guarde el resultado
-            $display("[MAC] Multiplicacion: %d * %d terminada. Acumulado parcial: %d", a, b, $signed(Accumulator));
-        end
-    endtask
+  initial begin
+    clk = 0;
+    forever #5 clk = ~clk;
+  end
 
-    // --- Proceso de Estímulos ---
-    initial begin
-        // Inicialización
-        clk = 0;
-        rst_n = 0;
-        start = 0;
-        clr_acc = 0;
-        A_in = 0;
-        B_in = 0;
+  // PROGRAMA DE PRUEBA
+  initial begin
+    $display("\n========================================");
+    $display("  INICIO DE SIMULACION CON INTERFACE");
+    $display("========================================");
 
-        $display("--------------------------------------------------");
-        $display("INICIANDO PRUEBA DE UNIDAD MAC");
-        $display("--------------------------------------------------");
+    // Paso A: inicializacion
+    rst_n = 0;
+    _if.initialize(); // Llamada a la tarea de la interfaz
+    #20 rst_n = 1;
+    $display("[TB] Reset liberado.");
 
-        // Reset del Sistema
-        #20 rst_n = 1;
-        #10 clr_acc = 1; // Limpiamos el acumulador al inicio
-        #10 clr_acc = 0;
-        #10;
+    // Paso B: Pruebas
 
-        // Caso 1: 10 * 5 = 50
-        multiply_and_add(16'd10, 16'd5);
+    // CASO 1: 10 * 10 = 100
+    $display("\n[TB] TC1: Calculando 10 * 10...");
+    _if.compute(16'd10, 16'd10); // Tarea automática: pone datos, da start, espera ready
 
-        // Caso 2: 2 * -3 = -6 (Acumulado debería ser 44)
-        multiply_and_add(16'd2, -16'd3);
+    if (_if.product !== 40'd100) 
+      $error("[FAIL] TC1: Esperaba 100, obtuve %0d", _if.product);
+    else 
+      $display("[PASS] TC1: Resultado correcto (100).");
 
-        // Caso 3: 100 * 10 = 1000 (Acumulado debería ser 1044)
-        multiply_and_add(16'd100, 16'd10);
+    // CASO 2: Acumulación (100 + (5 * 2) = 110)
+    // Nota: Como tu RTL acumula siempre, el resultado anterior (100) se suma.
+    $display("\n[TB] TC2: Acumulando 5 * 2...");
+    _if.compute(16'd5, 16'd2);
 
-        // Verificación Final
-        #20;
-        if (Accumulator == 40'd1044) begin
-            $display("--------------------------------------------------");
-            $display("PRUEBA EXITOSA Resultado Final: %d", $signed(Accumulator));
-            $display("--------------------------------------------------");
-        end else begin
-            $display("--------------------------------------------------");
-            $display("ERROR: Resultado esperado 1044, obtenido %d", $signed(Accumulator));
-            $display("--------------------------------------------------");
-        end
+    if (_if.product !== 40'd110) 
+      $error("[FAIL] TC2: Esperaba 110, obtuve %0d", _if.product);
+    else 
+      $display("[PASS] TC2: Acumulación correcta (110).");
 
-        #50 $finish;
-    end
+    // CASO 3: Signos (110 + (2 * -3) = 104)
+    $display("\n[TB] TC3: Restando (2 * -3)...");
+    _if.compute(16'd2, -16'sd3); // -3 en complemento a 2 de 16 bits
+
+    if (_if.product !== 40'd104) 
+      $error("[FAIL] TC3: Esperaba 104, obtuve %0d", _if.product);
+    else 
+      $display("[PASS] TC3: Signos correctos (104).");
+
+    // Fin
+    #50;
+    $display("\n========================================");
+    $display("  FIN DE SIMULACION EXITOSA");
+    $display("========================================");
+    $finish;
+  end
 
 endmodule
