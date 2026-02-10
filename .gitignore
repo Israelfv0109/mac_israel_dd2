@@ -33,3 +33,16 @@ dsn/
 *.bak
 *.old
 list.f.bak
+
+# --- Ignorar reportes de Sintesis y Vivado ---
+*.dcp
+*.jou
+*.log
+*.pb
+*.wdb
+*.vcd
+*_report.txt
+xsim.dir/
+.Xil/
+verif/vivado_work/logs/
+verif/work/logs/

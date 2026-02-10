@@ -53,3 +53,9 @@ clean:
 	rm -f work.*.wdb
 
 	[ ! -d work ] || rm -rf work
+
+synth:
+	vivado -mode batch -source run_synth.tcl -log synth.log
+
+open_synth:
+	vivado -mode gui mac_radix4_synth.dcp &
