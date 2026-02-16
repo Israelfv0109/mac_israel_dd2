@@ -4,7 +4,7 @@ module mac_cov (
     input logic rst_n,
     input logic signed [15:0] operand_a,
     input logic signed [15:0] operand_b,
-    input logic [2:0]  state,        // Ajusta según los bits de tu FSM
+    input logic [1:0]  state,        // Ajusta según los bits de tu FSM
     input logic signed [39:0] product_out,
     input logic ready
 );
@@ -39,11 +39,11 @@ module mac_cov (
         // Cobertura de la FSM (Booth)
         // ------------------------------------------------
         cp_fsm: coverpoint state {
-            bins IDLE   = {3'b000};
-            bins LOAD   = {3'b001};
-            bins SHIFT  = {3'b010};
-            bins ADD    = {3'b011};
-            bins DONE   = {3'b100};
+            bins IDLE   = {2'b00};
+            bins LOAD   = {2'b01};
+            bins CALC   = {2'b10};
+            bins DONE   = {2'b11};
+            illegal_bins otros = default; 
         }
 
         // ------------------------------------------------
@@ -68,13 +68,14 @@ module mac_cov (
 
 endmodule
 
-// El BIND es la magia: Conecta este módulo a tu diseño sin tocar el RTL
+// Al final de ../mac_cov.sv
+
 bind mac_top mac_cov u_mac_cov (
     .clk(clk),
     .rst_n(rst_n),
-    .operand_a(a_in),   // Asegúrate que estos nombres coincidan con los de mac_top
-    .operand_b(b_in),
-    .state(u_fsm.state), // Ejemplo: entrando a la jerarquía de la FSM
-    .product_out(p_out),
-    .ready(ready)
+    .operand_a(m_in),
+    .operand_b(q_in),
+    .product_out(product),
+    .ready(ready),
+    .state(multiplicador_inst.control_unit.state) 
 );

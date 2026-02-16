@@ -4,7 +4,7 @@
  ******************************************************************************/
 `timescale 1ns/1ps
 module mac_top #(parameter DATA_WIDTH = 16) (
-    input logic clk, rst_n, start, clr_acc,
+    input logic clk, rst_n, start,
     input logic [DATA_WIDTH-1:0] m_in, q_in,
     output logic [39:0] product,
     output logic ready
@@ -19,7 +19,7 @@ module mac_top #(parameter DATA_WIDTH = 16) (
     );
 
     accumulator_unit #(.DATA_WIDTH(16)) acumulador_inst (
-        .clk(clk), .rst_n(rst_n), .clr_acc(clr_acc), .acc_en(mult_done),
+        .clk(clk), .rst_n(rst_n), .acc_en(mult_done),
         .product_in(internal_product), 
         .acc_out(product)
     );

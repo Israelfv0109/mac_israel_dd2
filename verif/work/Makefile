@@ -18,7 +18,7 @@ compile_switches_pa = -f list.f -uvmhome CDNS-1.2 -uvm -l ${logs}/comp.log \
 
 sim:
 	mkdir -p ./logs
-	xrun -incdir .. -f list.f -l ./logs/comp.log +define+tb_mac_top+ -access +rwc -timescale 1ns/1ps -sv -linedebug
+	xrun -incdir .. -f list.f -coverage all -covoverwrite -l ./logs/comp.log +define+tb_mac_top+ -access +rwc -timescale 1ns/1ps -sv -linedebug
 	
 sim_uvm:
 	mkdir -p $(logs)

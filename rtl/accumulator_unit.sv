@@ -1,7 +1,7 @@
 `timescale 1ns/1ps
 
 module accumulator_unit #(parameter DATA_WIDTH = 16) (
-    input  logic clk, rst_n, clr_acc, acc_en,
+    input  logic clk, rst_n, acc_en,
     input  logic [2*DATA_WIDTH-1:0] product_in,
     output logic [39:0] acc_out
 );
@@ -16,7 +16,6 @@ module accumulator_unit #(parameter DATA_WIDTH = 16) (
 
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n)         acc_reg <= 40'b0;
-        else if (clr_acc)   acc_reg <= 40'b0;
         else if (acc_en)    acc_reg <= current_sum;
     end
 

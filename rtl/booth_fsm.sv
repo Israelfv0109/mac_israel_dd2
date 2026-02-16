@@ -6,7 +6,7 @@ module booth_fsm #(parameter DATA_WIDTH = 16) (
 );
     typedef enum logic [1:0] {IDLE, LOAD, CALC, DONE} state_t;
     state_t state, next_state;
-    logic [$clog2(DATA_WIDTH):0] bit_cnt;
+    logic [$clog2(DATA_WIDTH)-1:0] bit_cnt;
 
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin

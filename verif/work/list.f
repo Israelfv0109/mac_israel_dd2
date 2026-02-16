@@ -11,6 +11,7 @@
 
 # --- Cobertura y Assertions ---
 ../mac_cov.sv
+../mac_asserts.sv
 
 # --- Testbench ---
 ../mac_tb.sv
