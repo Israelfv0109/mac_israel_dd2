@@ -3,13 +3,13 @@ interface mac_if (input logic clk, input logic rst_n);
     logic [15:0] m_in, q_in;
     logic [39:0] product;
 
-    // BFM: Inicialización
+    // Inicialización
     task automatic initialize();
         start <= 0; m_in <= 0; q_in <= 0;
         @(posedge clk);
     endtask
 
-    // BFM: Driver
+    // Driver
     task automatic compute(input logic [15:0] val_m, input logic [15:0] val_q);
         @(posedge clk);
         start <= 1; m_in <= val_m; q_in <= val_q;

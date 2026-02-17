@@ -18,7 +18,7 @@ module mac_top #(parameter DATA_WIDTH = 16) (
         .result(internal_product), .ready(mult_done) 
     );
 
-    accumulator_unit #(.DATA_WIDTH(16)) acumulador_inst (
+    accumulator_unit #(.DATA_WIDTH(DATA_WIDTH)) acumulador_inst (
         .clk(clk), .rst_n(rst_n), .acc_en(mult_done),
         .product_in(internal_product), 
         .acc_out(product)

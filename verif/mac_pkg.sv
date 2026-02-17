@@ -10,7 +10,7 @@ package mac_pkg;
         constraint data_range { a inside {[-50:50]}; b inside {[-10:10]}; }
     endclass
 
-    // Clase para Corners (Test 4, 5)
+    // Clase para Corners (Test 4, 5) Distribución Ponderada
     class random_gen_corners extends random_gen;
         constraint c_zeros { 
             a dist {0:=50, 32767:=10, -32768:=10, [-100:100]:=30};

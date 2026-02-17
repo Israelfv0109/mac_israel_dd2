@@ -10,7 +10,7 @@ module booth_datapath #(parameter DATA_WIDTH = 16) (
     logic [DATA_WIDTH-1:0] Q;
     logic q_prev;
 
-    // --- 1. ALU DE 18 BITS (Para evitar el desbordamiento del signo) ---
+    // ALU DE 18 BITS (Para evitar el desbordamiento del signo)
     logic signed [DATA_WIDTH+1:0] ext_A;
     logic signed [DATA_WIDTH+1:0] ext_M;
     logic signed [DATA_WIDTH+1:0] alu_out;
@@ -24,18 +24,18 @@ module booth_datapath #(parameter DATA_WIDTH = 16) (
         case ({Q[1], Q[0], q_prev})
             3'b001, 3'b010: alu_out = ext_A + ext_M;
             3'b101, 3'b110: alu_out = ext_A - ext_M;
-            3'b011:         alu_out = ext_A + (ext_M <<< 1); // ¡Ahora el 2M sí cabe!
+            3'b011:         alu_out = ext_A + (ext_M <<< 1);
             3'b100:         alu_out = ext_A - (ext_M <<< 1);
-            default:        alu_out = ext_A;                 // +0
+            default:        alu_out = ext_A;
         endcase
     end
 
-    // --- 2. CABLE DE RECORRIDO (SHIFT) DE 34 BITS ---
+    // SHIFT DE 34 BITS
     // Unimos los 18 bits de la ALU, los 16 de Q y 1 de q_prev = 35 bits
     logic signed [2*DATA_WIDTH+2:0] shift_reg;
     assign shift_reg = {alu_out, Q, q_prev};
 
-    // --- 3. REGISTROS SECUENCIALES ---
+    // REGISTROS SECUENCIALES ---
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             {A, Q, q_prev} <= '0;
