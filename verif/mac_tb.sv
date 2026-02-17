@@ -6,7 +6,7 @@
 // `define MAC_ZERO_OPS_TEST
 // `define MAC_MAX_MIN_TEST
 // `define MAC_RST_MID_OP_TEST
-
+// `define MAC_CORNERS_TEST
 
 `include "mac_pkg.sv"
 //`include "mac_if.sv"
