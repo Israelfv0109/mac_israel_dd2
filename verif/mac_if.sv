@@ -1,16 +1,16 @@
 interface mac_if (input logic clk, input logic rst_n);
     logic start, ready;
-    logic [15:0] m_in, q_in;
-    logic [39:0] product;
+    logic signed [`MAC_DATA_WIDTH-1:0] m_in, q_in;
+    logic signed [`MAC_ACC_WIDTH-1:0] product;
 
     // Inicialización
     task automatic initialize();
-        start <= 0; m_in <= 0; q_in <= 0;
+        start <= 1'b0; m_in <= '0; q_in <= '0;
         @(posedge clk);
     endtask
 
     // Driver
-    task automatic compute(input logic [15:0] val_m, input logic [15:0] val_q);
+    task automatic compute(input logic signed [`MAC_DATA_WIDTH-1:0] val_m, input logic signed [`MAC_DATA_WIDTH-1:0] val_q);
         @(posedge clk);
         start <= 1; m_in <= val_m; q_in <= val_q;
         @(posedge clk);

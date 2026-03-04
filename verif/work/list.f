@@ -1,3 +1,5 @@
+../../rtl/mac_defs.svh
+
 # --- RTL ---
 ../../rtl/accumulator_unit.sv
 ../../rtl/adder_40bit.sv

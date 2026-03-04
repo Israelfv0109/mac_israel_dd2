@@ -41,8 +41,8 @@ module mac_tb;
     // TEST CASE 1: BASIC FLOW
 `ifdef MAC_BASIC_FLOW_TEST
     initial begin
-    static logic signed [15:0] rand_a, rand_b;
-    static logic signed [39:0] expected_acc = 0;
+    static logic signed [`MAC_DATA_WIDTH-1:0] rand_a, rand_b;
+    static logic signed [`MAC_ACC_WIDTH-1:0] expected_acc = 0;
 
         $display("=================================");
         $display("TEST CASE 1: RANDOM FLOW");
@@ -52,10 +52,10 @@ module mac_tb;
         if_i.initialize();
 
         // Primera ráfaga (500mil cálculos)
-        $display("Iniciando primera ráfaga de 5millones de acumulaciones...");
+        $display("Iniciando primera ráfaga de 500mil acumulaciones...");
         repeat(500000) begin
             rand_a = $random; rand_b = $random;
-            expected_acc = expected_acc + (rand_a * rand_b);
+            expected_acc = expected_acc + ($signed(rand_a) * $signed(rand_b));
             if_i.compute(rand_a, rand_b);
             assert(if_i.product === expected_acc) else $error("Error en acumulación");
         end
@@ -67,28 +67,26 @@ module mac_tb;
         expected_acc = 0;
 
         // Segunda ráfaga (otros 500mil calculos)
-        $display("Segunda ráfaga tras reset de otros 5 millones");
+        $display("Segunda ráfaga tras reset");
         repeat(500000) begin
             rand_a = $random; rand_b = $random;
-            expected_acc = expected_acc + (rand_a * rand_b);
+            expected_acc = expected_acc + ($signed(rand_a) * $signed(rand_b));
             if_i.compute(rand_a, rand_b);
             assert(if_i.product === expected_acc) else $error("Error tras reset");
         end
 
-        // Se borran cruces por no tener random_gen_corners instanciado
-
         $display("TEST CASE 1 PASSED (Total: 1millon de pruebas)");
-	
-	    // ==========================================================
-        // TEST CASE 6: RESET ON-FLY
+    
+        // ==========================================================
+        // TEST CASE 6: RESET ON-FLY (Dentro del bloque del Test 1)
         // ==========================================================
         $display("=========================================");
         $display("RUNNING: TEST CASE 6 (Reset On-Fly)");
         $display("=========================================");
 
         if_i.start <= 1'b1;
-        if_i.m_in <= 16'h1234;
-        if_i.q_in <= 16'h5678;
+        if_i.m_in <= 32'h1234;
+        if_i.q_in <= 32'h5678;
 
         repeat(5) @(posedge clk);
         $display("@%0t ns: Interrumpiendo operación con RESET...", $time);
@@ -98,7 +96,7 @@ module mac_tb;
         rst_n = 1'b1; 
 
         @(posedge clk);
-        if (if_i.ready == 0 && dut.u_mac_cov.product_out == 0) begin
+        if (if_i.ready == 0 && if_i.product == 0) begin
             $display("@%0t ns: SUCCESS - Recuperación exitosa.", $time);
             $display("TEST CASE 6 PASSED");
         end else begin
@@ -107,15 +105,15 @@ module mac_tb;
         end
         $display("=============================================\n");
 
-        $finish;	
+        $finish;    
     end
 `endif
 
     // TEST CASE 2: SIGNED MIX (Signos Aleatorios)
 `ifdef MAC_SIGNED_MIX_TEST
     random_gen rg;
-    logic signed [39:0] tb_acc;
-    logic signed [39:0] mult_res;
+    logic signed [`MAC_ACC_WIDTH-1:0] tb_acc;
+    logic signed [`MAC_ACC_WIDTH-1:0] mult_res;
 
     initial begin
         rg = new();
@@ -124,7 +122,7 @@ module mac_tb;
         $display("=================================");
 
         // Reset Limpio
-        tb_acc = 40'd0;
+        tb_acc = '0;
         rst_n = 0;
         #20ns;
         rst_n = 1;
@@ -155,8 +153,8 @@ module mac_tb;
     // TEST CASE 3: ACCUM LOOP (Acumulación larga)
 `ifdef MAC_ACCUM_LOOP_TEST
     random_gen_small rg_small;
-    logic signed [39:0] tb_acc;
-    logic signed [39:0] mult_res;
+    logic signed [`MAC_ACC_WIDTH-1:0] tb_acc;
+    logic signed [`MAC_ACC_WIDTH-1:0] mult_res;
 
     initial begin
         rg_small = new();
@@ -164,8 +162,8 @@ module mac_tb;
         $display("TEST CASE 3: ACCUMULATION LOOP");
         $display("=======================================");
 
-        // 1. Reset Limpio (¡Adiós al cuelgue!)
-        tb_acc = 40'd0;
+        // 1. Reset Limpio
+        tb_acc = '0;
         rst_n = 0;
         #20ns;
         rst_n = 1;
@@ -175,7 +173,7 @@ module mac_tb;
         repeat(1000000) begin
             void'(rg_small.randomize());
 
-            // Matemáticas nativas perfectas (usando rg_small)
+            // Matemáticas nativas perfectas
             mult_res = $signed(rg_small.a) * $signed(rg_small.b);
             tb_acc += mult_res;
             if_i.compute(rg_small.a, rg_small.b);
@@ -204,17 +202,17 @@ module mac_tb;
 
         // Cargar algo primero: 10*10 = 100
         $display("Cargando base: 10 * 10 = 100...");
-        if_i.compute(16'd10, 16'd10);
+        if_i.compute(32'd10, 32'd10);
 
         // Multiplicar por Cero (A=0) -> Debe mantenerse en 100
         $display("Acumulando: 0 * 55...");
-        if_i.compute(16'd0, 16'd55);
-        assert(if_i.product === 40'd100) else $error("Fallo Mult por Cero (A). DUT=%0d", if_i.product);
+        if_i.compute(32'd0, 32'd55);
+        assert(if_i.product === 64'd100) else $error("Fallo Mult por Cero (A). DUT=%0d", if_i.product);
 
         // Multiplicar por Cero (B=0) -> Debe mantenerse en 100
         $display("Acumulando: 99 * 0...");
-        if_i.compute(16'd99, 16'd0);
-        assert(if_i.product === 40'd100) else $error("Fallo Mult por Cero (B). DUT=%0d", if_i.product);
+        if_i.compute(32'd99, 32'd0);
+        assert(if_i.product === 64'd100) else $error("Fallo Mult por Cero (B). DUT=%0d", if_i.product);
 
         $display("\nTEST CASE 4 PASSED");
         $finish;
@@ -223,37 +221,37 @@ module mac_tb;
 
     // TEST CASE 5: MAX/MIN (Corner Cases)
 `ifdef MAC_MAX_MIN_TEST
-    logic signed [39:0] tb_acc;
-    logic signed [39:0] mult_res;
+    logic signed [`MAC_ACC_WIDTH-1:0] tb_acc;
+    logic signed [`MAC_ACC_WIDTH-1:0] mult_res;
 
     initial begin
         $display("=================================");
         $display("TEST CASE 5: MAX / MIN");
         $display("=================================");
 
-        tb_acc = 40'd0;
+        tb_acc = '0;
         rst_n = 0; #20ns; rst_n = 1;
         if_i.initialize();
 
-        // 1. Max * Max (32767 * 32767)
-        $display("Max * Max (32767 * 32767)...");
-        mult_res = $signed(16'h7FFF) * $signed(16'h7FFF);
+        // 1. Max * Max
+        $display("Max * Max...");
+        mult_res = $signed(`MAC_MAX_POS) * $signed(`MAC_MAX_POS);
         tb_acc += mult_res;
-        if_i.compute(16'h7FFF, 16'h7FFF);
+        if_i.compute(`MAC_MAX_POS, `MAC_MAX_POS);
         assert(if_i.product === tb_acc) else $error("Fallo Max*Max. DUT=%0d", if_i.product);
 
-        // 2. Min * Min (-32768 * -32768)
-        $display("Min * Min (-32768 * -32768)...");
-        mult_res = $signed(16'h8000) * $signed(16'h8000);
+        // 2. Min * Min
+        $display("Min * Min...");
+        mult_res = $signed(`MAC_MAX_NEG) * $signed(`MAC_MAX_NEG);
         tb_acc += mult_res;
-        if_i.compute(16'h8000, 16'h8000);
+        if_i.compute(`MAC_MAX_NEG, `MAC_MAX_NEG);
         assert(if_i.product === tb_acc) else $error("Fallo Min*Min. DUT=%0d", if_i.product);
 
-        // 3. Max * Min (32767 * -32768)
-        $display("Max * Min (32767 * -32768)...");
-        mult_res = $signed(16'h7FFF) * $signed(16'h8000);
+        // 3. Max * Min
+        $display("Max * Min...");
+        mult_res = $signed(`MAC_MAX_POS) * $signed(`MAC_MAX_NEG);
         tb_acc += mult_res;
-        if_i.compute(16'h7FFF, 16'h8000);
+        if_i.compute(`MAC_MAX_POS, `MAC_MAX_NEG);
         assert(if_i.product === tb_acc) else $error("Fallo Max*Min. DUT=%0d", if_i.product);
 
         $display("TEST CASE 5 PASSED");
@@ -261,11 +259,11 @@ module mac_tb;
     end
 `endif
 
-    // TEST CASE 7: CORNER CASES AUTOMÁTICOS (El Francotirador)
+    // TEST CASE 7: CORNER CASES AUTOMÁTICOS
 `ifdef MAC_CORNERS_TEST
     random_gen_corners rg_corners;
-    logic signed [39:0] tb_acc;
-    logic signed [39:0] mult_res;
+    logic signed [`MAC_ACC_WIDTH-1:0] tb_acc;
+    logic signed [`MAC_ACC_WIDTH-1:0] mult_res;
 
     initial begin
         rg_corners = new();
@@ -274,7 +272,7 @@ module mac_tb;
         $display("=======================================");
 
         // Reset Limpio
-        tb_acc = 40'd0;
+        tb_acc = '0;
         rst_n = 0; #20ns; rst_n = 1;
         if_i.initialize();
 

@@ -1,20 +1,18 @@
 package mac_pkg;
     // Clase Base: Generador Random
     class random_gen;
-        rand bit signed [15:0] a, b;
-        constraint data_range { a inside {[-32768:32767]}; b inside {[-32768:32767]}; }
-    endclass
-    
-    // Clase para Sanity (Test 1, 2, 3)
-    class random_gen_small extends random_gen;
-        constraint data_range { a inside {[-50:50]}; b inside {[-10:10]}; }
+        rand bit signed [`MAC_DATA_WIDTH-1:0] a, b;
+        constraint data_range { 
+            a inside {[`MAC_MAX_NEG : `MAC_MAX_POS]}; 
+            b inside {[`MAC_MAX_NEG : `MAC_MAX_POS]}; 
+        }
     endclass
 
     // Clase para Corners (Test 4, 5) Distribución Ponderada
     class random_gen_corners extends random_gen;
         constraint c_zeros { 
-            a dist {0:=40, 32767:=15, -32768:=15, [1:32766]:/15, [-32767:-1]:/15};
-            b dist {0:=40, 32767:=15, -32768:=15, [1:32766]:/15, [-32767:-1]:/15};
+           a dist {0:=20, `MAC_MAX_POS:=20, `MAC_MAX_NEG:=20, [1:`MAC_MAX_POS-1]:/20, [`MAC_MAX_NEG+1:-1]:/20};
+            b dist {0:=20, `MAC_MAX_POS:=20, `MAC_MAX_NEG:=20, [1:`MAC_MAX_POS-1]:/20, [`MAC_MAX_NEG+1:-1]:/20};
 	    //el diagonal distribuye en partes iguales
         }
     endclass

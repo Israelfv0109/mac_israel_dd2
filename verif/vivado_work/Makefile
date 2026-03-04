@@ -1,5 +1,5 @@
 src      = mac_top
-tb       = mac_tb
+tb       = mac_tb # Opciones: mac_tb o tb_wishbone
 testname = test
 logs     = ./logs
 verbosity= UVM_MEDIUM

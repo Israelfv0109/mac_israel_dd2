@@ -1,23 +1,23 @@
 `timescale 1ns/1ps
 
-module booth_datapath #(parameter DATA_WIDTH = 16) (
+module booth_datapath (
     input  logic clk, rst_n,
-    input  logic [DATA_WIDTH-1:0] m_in, q_in,
+    input  logic [`MAC_DATA_WIDTH-1:0] m_in, q_in,
     input  logic load, shift, op_sel,
-    output logic [2*DATA_WIDTH-1:0] product
+    output logic [2*`MAC_ACC_WIDTH-1:0] product
 );
-    logic signed [DATA_WIDTH-1:0] A, M;
-    logic [DATA_WIDTH-1:0] Q;
+    logic signed [`MAC_DATA_WIDTH-1:0] A, M;
+    logic [`MAC_DATA_WIDTH-1:0] Q;
     logic q_prev;
 
     // ALU DE 18 BITS (Para evitar el desbordamiento del signo)
-    logic signed [DATA_WIDTH+1:0] ext_A;
-    logic signed [DATA_WIDTH+1:0] ext_M;
-    logic signed [DATA_WIDTH+1:0] alu_out;
+    logic signed [`MAC_DATA_WIDTH+1:0] ext_A;
+    logic signed [`MAC_DATA_WIDTH+1:0] ext_M;
+    logic signed [`MAC_DATA_WIDTH+1:0] alu_out;
     
     // Extendemos el signo copiando el bit más significativo (MSB) DOS VECES
-    assign ext_A = {{2{A[DATA_WIDTH-1]}}, A};
-    assign ext_M = {{2{M[DATA_WIDTH-1]}}, M};
+    assign ext_A = {{2{A[`MAC_DATA_WIDTH-1]}}, A};
+    assign ext_M = {{2{M[`MAC_DATA_WIDTH-1]}}, M};
 
     // Multiplexor de suma/resta (Pura combinacional)
     always_comb begin
@@ -32,7 +32,7 @@ module booth_datapath #(parameter DATA_WIDTH = 16) (
 
     // SHIFT DE 34 BITS
     // Unimos los 18 bits de la ALU, los 16 de Q y 1 de q_prev = 35 bits
-    logic signed [2*DATA_WIDTH+2:0] shift_reg;
+    logic signed [`MAC_ACC_WIDTH+2:0] shift_reg;
     assign shift_reg = {alu_out, Q, q_prev};
 
     // REGISTROS SECUENCIALES ---

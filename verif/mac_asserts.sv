@@ -1,7 +1,7 @@
 module mac_asserts (
     input logic clk, rst_n, start, ready,
-    input logic [15:0] m_in, q_in,
-    input logic [39:0] product
+    input logic signed [`MAC_DATA_WIDTH-1:0] m_in, q_in,
+    input logic signed [`MAC_ACC_WIDTH-1:0] product
 );
 
     // Regla: Si hay start, ready debe bajar al siguiente ciclo

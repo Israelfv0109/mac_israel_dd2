@@ -1,12 +1,12 @@
 `timescale 1ns/1ps
 
-module booth_fsm #(parameter DATA_WIDTH = 16) (
+module booth_fsm (
     input  logic clk, rst_n, start,
     output logic load, shift, op_sel, ready
 );
     typedef enum logic [1:0] {IDLE, LOAD, CALC, DONE} state_t;
     state_t state, next_state;
-    logic [$clog2(DATA_WIDTH)-1:0] bit_cnt;
+    logic [$clog2(`MAC_DATA_WIDTH)-1:0] bit_cnt;
 
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
@@ -31,7 +31,7 @@ module booth_fsm #(parameter DATA_WIDTH = 16) (
                 op_sel = 1'b1;
                 shift  = 1'b1;
                 // Condición Radix-4: DATA_WIDTH / 2
-                next_state = (bit_cnt == (DATA_WIDTH/2)-1) ? DONE : CALC;
+                next_state = (bit_cnt == (`MAC_DATA_WIDTH/2)-1) ? DONE : CALC;
             end
             DONE: begin
                 ready = 1'b1;

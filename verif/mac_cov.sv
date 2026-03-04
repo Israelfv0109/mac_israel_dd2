@@ -1,11 +1,11 @@
-// mac_cov.sv - Adaptado para el MAC de Israel
 module mac_cov (
     input logic clk,
     input logic rst_n,
-    input logic signed [15:0] operand_a,
-    input logic signed [15:0] operand_b,
-    input logic [1:0]  state,        // Ajusta según los bits de tu FSM
-    input logic signed [39:0] product_out,
+    input logic start,
+    input logic signed [`MAC_DATA_WIDTH-1:0] operand_a,
+    input logic signed [`MAC_DATA_WIDTH-1:0] operand_b,
+    input logic [1:0]  state,
+    input logic signed [`MAC_ACC_WIDTH-1:0] product_out,
     input logic ready
 );
 
@@ -15,24 +15,24 @@ module mac_cov (
         option.name = "Cobertura_Funcional_MAC";
 
         // Cobertura de Operandos (Signos y Casos Esquina) CORNERS DE PKG
-        cp_a: coverpoint operand_a {
-            bins zero     = {0};
-            bins pos_small = {[1 : 127]};
-            bins pos_large = {[128 : 32767]};
-            bins neg_small = {[-128 : -1]};
-            bins neg_large = {[-32768 : -129]};
-            bins max_pos   = {32767};
-            bins max_neg   = {-32768};
+        cp_a: coverpoint operand_a iff (state == 2'b01) {
+            bins zero      = {0};
+            bins pos_small = {[1 : `MAC_SMALL_POS_LIMIT]};
+            bins pos_large = {[`MAC_SMALL_POS_LIMIT + 1 : `MAC_MAX_POS - 1]};
+            bins neg_small = {[`MAC_SMALL_NEG_LIMIT : -1]};
+            bins neg_large = {[`MAC_MAX_NEG + 1 : `MAC_SMALL_NEG_LIMIT - 1]};
+            bins max_pos   = {`MAC_MAX_POS};
+            bins max_neg   = {`MAC_MAX_NEG};
         }
 
-        cp_b: coverpoint operand_b {
-            bins zero     = {0};
-            bins pos_small = {[1 : 127]};
-            bins pos_large = {[128 : 32767]};
-            bins neg_small = {[-128 : -1]};
-            bins neg_large = {[-32768 : -129]};
-            bins max_pos   = {32767};
-            bins max_neg   = {-32768};
+        cp_b: coverpoint operand_b iff (state == 2'b01) {
+            bins zero      = {0};
+            bins pos_small = {[1 : `MAC_SMALL_POS_LIMIT]};
+            bins pos_large = {[`MAC_SMALL_POS_LIMIT + 1 : `MAC_MAX_POS - 1]};
+            bins neg_small = {[`MAC_SMALL_NEG_LIMIT : -1]};
+            bins neg_large = {[`MAC_MAX_NEG + 1 : `MAC_SMALL_NEG_LIMIT - 1]};
+            bins max_pos   = {`MAC_MAX_POS};
+            bins max_neg   = {`MAC_MAX_NEG};
         }
 
         // Cobertura de la FSM (Booth)
@@ -45,7 +45,7 @@ module mac_cov (
         }
 
         // COMBINACIONES (CROSS COVERAGE)
-        a_x_b: cross cp_a, cp_b;
+        a_x_b: cross cp_a, cp_b iff (state == 2'b01);
 
     endgroup
 
@@ -66,6 +66,7 @@ endmodule
 bind mac_top mac_cov u_mac_cov (
     .clk(clk),
     .rst_n(rst_n),
+    .start(start),
     .operand_a(m_in),
     .operand_b(q_in),
     .product_out(product),
